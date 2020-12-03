@@ -15,12 +15,19 @@ def replacer(data, old_to_new: dict):
     """
     return reduce(unpacker(str.replace), old_to_new.items(), data)
 
-def delete_suffixes(data, suffix_regexes):
-    def yield_cut_ending(line):
-        for suffix_regex in suffix_regexes:
-            re.search(suffix_regex, line)
+def delete_suffixes(lines, replace_capture_regexes):
+    """
+    If line matches regex, replace regex for what was captured from it
+    Example:
+    sleep(1u); as line
+    (\d+)u as regex
+    returns sleep(1);
+
+    """
+    def yield_replaced_line(line):
+        for suffix_regex in replace_capture_regexes:
             if ( match := re.search(suffix_regex, line) ):
-                return line.replace(match.group(), match.group(1)) 
+                line = line.replace(match.group(), match.group(1)) 
         return line
 
-    return map(yield_cut_ending, data)
+    return map(yield_replaced_line, lines)
