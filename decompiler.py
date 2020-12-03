@@ -34,11 +34,11 @@ replace_list = {
     '((':'(',
     '))':')',
 }
-regex_patterns = {
-    '\d+LL': 2,
-    '\d+uLL': 3, 
-    '\d+u': 1
-}
+regex_patterns = [
+    '(\d+)LL',
+    '(\d+u)LL', 
+    '(\d+)u'
+]
 
 
 def decompiler():
