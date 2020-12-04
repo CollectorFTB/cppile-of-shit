@@ -5,15 +5,18 @@ from util import gets_raw_data
 
 
 
-def unpacker(func):
-    return lambda data, arg: func(data, *arg)
+# def unpacker(func):
+#     return lambda data, arg: func(data, *arg)
 
 @gets_raw_data
 def replacer(data, old_to_new: dict):
     """
     Replace old for new for each old,new pair in the param
     """
-    return reduce(unpacker(str.replace), old_to_new.items(), data)
+    for old, new in old_to_new.items():
+        data = data.replace(old, new)
+    return data
+    # return reduce(unpacker(str.replace), old_to_new.items(), data)
 
 def delete_suffixes(lines, replace_capture_regexes):
     """
