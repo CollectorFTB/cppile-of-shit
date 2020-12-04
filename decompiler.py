@@ -14,41 +14,15 @@ from replacer import replacer, delete_suffixes
 from stream_parser import replace_cpp_operators, join_stream_lines
 from util import handle_ida_dump
 
-replace_list = {
-    '<std::char_traits<char>>': '',
-    '&std::': 'std::',
-    '<char,std::char_traits<char>>': '',
-    '<char,std::char_traits<char>,std::allocator<char>>': '',
-    '::ostream': '',
-    '(__fastcall **)': '',
-    '(__int64)': '',
-    '*(_QWORD *)': '',
-    '*(void )': '',
-    '(*(unsigned int (__int64, __int64))': '',
-    '*(__int64 (_QWORD *, void *))': '',
-    # 'std::endl': '"\\n"',
-    '(*(__int64 (__int64, const char **))': '',
-    '**(void (__fastcall ***)(__int64, char *))':'',
-    '(unsigned int)': '',
-    '(_QWORD *)': '',
-    '((':'(',
-    '))':')',
-}
-regex_patterns = [
-    '(\d+)LL',
-    '(\d+u)LL', 
-    '(\d+)u'
-]
 
 
 def decompiler():
     ida_dump_filename = sys.argv[1]
 
+    processing_funcs = [replacer, replace_cpp_operators, join_stream_lines, delete_suffixes]
     with handle_ida_dump(ida_dump_filename) as decompilation:
-        decompilation << replacer(decompilation.dump, replace_list)
-        decompilation << replace_cpp_operators(decompilation.dump)
-        decompilation << join_stream_lines(decompilation.dump)
-        decompilation << delete_suffixes(decompilation.dump, regex_patterns)
+        for func in processing_funcs:
+            decompilation << func(decompilation.dump)
 
 def main():
     decompiler()
